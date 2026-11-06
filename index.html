@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Uai, Qual Casa?</title>
+    <meta
+      name="description"
+      content="A família escolhe junto a casa da praia: fotos, mapa e curtidas."
+    />
+    <meta name="theme-color" content="#8adbe8" />
+    <link rel="icon" type="image/png" href="imagens/logo/logo.png" />
+    <link rel="apple-touch-icon" href="imagens/logo/logo.png" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Shrikhand&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="tinta" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="7" />
+          <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -3.4 2.5" />
+          <feComposite in="SourceGraphic" operator="in" />
+        </filter>
+        <symbol id="onda-a" viewBox="0 0 1200 100" preserveAspectRatio="none">
+          <path d="M0 40C100 10 200 10 300 40S500 70 600 40C700 10 800 10 900 40S1100 70 1200 40V100H0Z" />
+        </symbol>
+        <symbol id="onda-b" viewBox="0 0 1200 100" preserveAspectRatio="none">
+          <path d="M0 55C120 30 180 30 300 50S480 80 600 55C720 30 780 30 900 50S1080 80 1200 55V100H0Z" />
+        </symbol>
+        <symbol id="onda-c" viewBox="0 0 1200 100" preserveAspectRatio="none">
+          <path d="M0 72C90 58 210 58 300 70S510 86 600 72C690 58 810 58 900 70S1110 86 1200 72V100H0Z" />
+        </symbol>
+        <symbol id="icone-joinha" viewBox="0 0 24 24">
+          <path d="M7 10v12" />
+          <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+        </symbol>
+        <symbol id="icone-pin" viewBox="0 0 40 52">
+          <path class="pin__gota" d="M20 1C9.5 1 2 9.2 2 19.2 2 32 20 50 20 50s18-18 18-30.8C38 9.2 30.5 1 20 1Z" />
+          <path class="pin__casa" d="M20 9 8.5 19.5H12V30h6.2v-6.5h3.6V30H28V19.5h3.5Z" />
+        </symbol>
+        <path id="carimbo-aro" d="M100 28a72 72 0 1 1-.01 0" />
+        <g id="carimbo-base">
+          <circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="5" />
+          <circle cx="100" cy="100" r="60" fill="none" stroke="currentColor" stroke-width="2.5" />
+          <text class="carimbo__aro" fill="currentColor" font-size="15.5">
+            <textPath href="#carimbo-aro" textLength="444">NOSSA VIAGEM EM FAMÍLIA ★ UAI, QUAL CASA? ★</textPath>
+          </text>
+        </g>
+        <symbol id="carimbo-curti" viewBox="0 0 200 200">
+          <use href="#carimbo-base" />
+          <text class="carimbo__voto" x="100" y="115" text-anchor="middle" fill="currentColor" font-size="41">Curti</text>
+        </symbol>
+        <symbol id="carimbo-nao-curti" viewBox="0 0 200 200">
+          <use href="#carimbo-base" />
+          <text class="carimbo__voto" text-anchor="middle" fill="currentColor" font-size="31">
+            <tspan x="100" y="94">Não</tspan><tspan x="100" y="125">curti</tspan>
+          </text>
+        </symbol>
+      </defs>
+    </svg>
+
+    <header class="air-header">
+      <div class="air-header__inner">
+        <div class="air-header__right">
+          <a
+            id="link-ver-votacao"
+            class="air-link-admin"
+            href="./"
+            target="_blank"
+            rel="noopener"
+            hidden
+            >Ver o site</a
+          >
+          <div id="bloco-usuario" class="air-usuario" hidden>
+            <span id="nome-usuario-display" class="air-usuario__nome"></span>
+            <button type="button" id="btn-sair-usuario" class="air-btn-ghost">Sair</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="supabase-aviso" class="aviso aviso-erro air-aviso" hidden></div>
+
+    <!-- Boas-vindas + nome na primeira visita -->
+    <div id="overlay-nome" class="nome-overlay" hidden>
+      <div class="nascente" aria-hidden="true">
+        <div class="nascente__raios"></div>
+        <div class="nascente__sol"></div>
+      </div>
+      <svg class="gaivota" viewBox="0 0 36 14" aria-hidden="true"><path d="M1 12C7 2 13 2 18 9c5-7 11-7 17 3" /></svg>
+      <svg class="gaivota gaivota--2" viewBox="0 0 36 14" aria-hidden="true"><path d="M1 12C7 2 13 2 18 9c5-7 11-7 17 3" /></svg>
+      <div class="mar mar--tela" aria-hidden="true">
+              <svg class="mar__onda mar__onda--clara"><use href="#onda-a" width="100%" height="100%" /></svg>
+              <svg class="mar__onda mar__onda--media"><use href="#onda-b" width="100%" height="100%" /></svg>
+              <svg class="mar__onda mar__onda--funda"><use href="#onda-c" width="100%" height="100%" /></svg>
+            </div>
+      <div
+        class="nome-overlay__card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="nome-overlay-titulo-boas"
+      >
+        <div id="nome-overlay-step-boas" class="nome-overlay__step nome-overlay__step--ativo">
+          <img class="nome-overlay__logo" src="imagens/logo/logo-800.webp" alt="" width="340" height="227" fetchpriority="high" />
+          <h2 id="nome-overlay-titulo-boas" class="nome-overlay__titulo">Que bom ter você aqui!</h2>
+          <p class="nome-overlay__texto nome-overlay__texto--destaque">
+            Vamos escolher juntos a casa da nossa viagem. Aqui tem foto, mapa e curtida, tudo num lugar só.
+          </p>
+          <button type="button" id="btn-boas-continuar" class="air-btn air-btn--primary">Ver as casas</button>
+        </div>
+
+        <div id="nome-overlay-step-nome" class="nome-overlay__step" hidden>
+          <h2 id="nome-overlay-titulo-nome" class="nome-overlay__titulo">E você, quem é?</h2>
+          <p class="nome-overlay__texto">
+            Coloca seu nome pra família saber de quem é o palpite. Ele fica salvo neste aparelho.
+          </p>
+          <input
+            id="input-nome-overlay"
+            type="text"
+            class="air-input"
+            maxlength="120"
+            autocomplete="name"
+            placeholder="Ex.: Maria"
+          />
+          <button type="button" id="btn-confirmar-nome" class="air-btn air-btn--primary">Começar</button>
+          <p id="nome-overlay-erro" class="nome-overlay__erro" role="alert"></p>
+        </div>
+      </div>
+    </div>
+
+    <main class="air-main">
+      <div class="air-split">
+        <section class="air-lista-col" aria-label="Lista de casas">
+          <div class="lista-topo">
+            <div class="masthead">
+              <a class="air-logo" href="./" aria-label="Uai, Qual Casa? Início">
+                <img class="air-logo__img" src="imagens/logo/logo-800.webp" alt="" width="165" height="110" fetchpriority="high" />
+              </a>
+              <div class="mar" aria-hidden="true">
+                <svg class="mar__onda mar__onda--clara"><use href="#onda-a" width="100%" height="100%" /></svg>
+                <svg class="mar__onda mar__onda--media"><use href="#onda-b" width="100%" height="100%" /></svg>
+                <svg class="mar__onda mar__onda--funda"><use href="#onda-c" width="100%" height="100%" /></svg>
+              </div>
+              <img class="masthead__marca" src="imagens/logo/marca-obs.png" alt="O Bom Sobrinho" width="136" height="160" />
+            </div>
+            <div class="air-lista-head">
+              <h1 class="air-lista-titulo">Nossa casa na praia</h1>
+              <fieldset id="ordenacao" class="ordem">
+                <legend class="sr-only">Ordenar as casas</legend>
+                <label><input type="radio" name="ordenacao" value="ordem" checked /><span class="ordem__chip">Na ordem</span></label>
+                <label><input type="radio" name="ordenacao" value="preco" /><span class="ordem__chip">Menor preço</span></label>
+                <label><input type="radio" name="ordenacao" value="perto" /><span class="ordem__chip">Mais perto</span></label>
+                <label id="ordem-curtidas"><input type="radio" name="ordenacao" value="votos" /><span class="ordem__chip">Curtidas</span></label>
+              </fieldset>
+            </div>
+          </div>
+          <ul id="lista-casas" class="air-grid-cards"></ul>
+        </section>
+        <div class="air-mapa-col" aria-hidden="false">
+          <div class="ponto">
+            <p id="ponto-dica" class="ponto__dica" role="status" hidden>Escolha no mapa o lugar onde a família vai se encontrar.</p>
+            <div class="ponto__acoes">
+              <button type="button" id="btn-ponto-marcar" class="air-btn ponto__btn">
+                <svg class="pin" aria-hidden="true"><use href="#icone-pin" /></svg>
+                <span id="btn-ponto-marcar-texto">Marcar ponto da família</span>
+              </button>
+              <button type="button" id="btn-ponto-remover" class="air-btn ponto__remover" hidden>Remover</button>
+            </div>
+          </div>
+          <div id="map" class="air-map-inner" role="application" aria-label="Mapa das casas"></div>
+        </div>
+      </div>
+
+      <section class="air-admin-wrap">
+        <div id="admin" class="panel admin-panel" hidden>
+          <div class="admin-topo">
+            <img class="admin-topo__logo" src="imagens/logo/logo-800.webp" alt="" width="150" height="100" decoding="async" />
+            <h2>Modo organizador</h2>
+          </div>
+          <p class="admin-lead">
+            Área só pra quem tem o link com segredo. Operações sensíveis usam a função no Supabase.
+          </p>
+          <p id="admin-fetch-erro" class="admin-erro-aviso" role="alert" hidden></p>
+
+          <div class="admin-grid">
+            <div class="admin-card">
+              <h3>Ranking de curtidas</h3>
+              <p class="muted small">
+                Contagem de quem marcou <strong>Curti</strong> em cada casa.
+              </p>
+              <ol id="admin-ranking" class="admin-ranking"></ol>
+            </div>
+
+            <div class="admin-card">
+              <h3>Controle da votação</h3>
+              <p id="admin-config-status" class="admin-estado" role="status"></p>
+              <div class="btn-row">
+                <button type="button" id="btn-votacao" class="btn btn-secondary">Pausar votação</button>
+                <button type="button" id="btn-resultados" class="btn btn-secondary">Mostrar resultados</button>
+                <button type="button" id="btn-limpar-votos" class="btn btn-danger">Limpar todos os votos</button>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <h3>Opiniões recentes</h3>
+              <ul id="admin-votos-lista" class="admin-votos"></ul>
+              <p class="muted small">Pra apagar, usa o botão ao lado.</p>
+            </div>
+
+            <div class="admin-card">
+              <h3>Exportar / editar <code>casas.json</code></h3>
+              <p class="muted small">
+                O site lê o arquivo estático. Copie o JSON abaixo, edite no seu computador e substitua o arquivo.
+              </p>
+              <textarea id="admin-json" class="admin-json" rows="14" readonly></textarea>
+              <button type="button" id="btn-copiar-json" class="btn btn-secondary">Copiar JSON</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <button type="button" id="btn-vista" class="air-btn vista-btn">Ver no mapa</button>
+
+    <div
+      id="modal-detalhe"
+      class="modal"
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-titulo"
+    >
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-card">
+        <button type="button" class="modal-fechar" data-close="true" aria-label="Fechar">×</button>
+        <div class="modal-corpo">
+          <div class="galeria-fullscreen">
+            <div id="modal-galeria" class="galeria" aria-live="polite"></div>
+            <div id="modal-carimbo" class="modal-carimbo"></div>
+          </div>
+          <div class="modal-info">
+            <h2 id="modal-titulo"></h2>
+            <div class="selo selo--grande">
+              <div class="selo__papel">
+                <div class="selo__miolo">
+                  <strong id="modal-preco"></strong>
+                  <span>total</span>
+                </div>
+              </div>
+            </div>
+            <div id="modal-rota" class="modal-rota" hidden>
+              <p id="modal-rota-texto" class="modal-rota__texto" role="status"></p>
+              <div id="modal-rota-mapa" class="modal-rota__mapa" aria-hidden="true"></div>
+            </div>
+            <div id="modal-desc" class="descricao"></div>
+            <p id="modal-link" class="modal-link"></p>
+            <div id="modal-voto" class="modal-voto">
+              <div class="modal-voto-texto">
+                <p class="modal-voto-lead">O que você achou?</p>
+                <p id="modal-voto-msg" class="modal-voto-msg" role="status" aria-live="polite"></p>
+              </div>
+              <div class="modal-voto-botoes">
+                <button type="button" id="btn-curti" class="air-btn air-btn--like air-btn--icone" aria-label="Curti" title="Curti" aria-pressed="false">
+                  <svg aria-hidden="true"><use href="#icone-joinha" /></svg>
+                </button>
+                <button type="button" id="btn-nao-curti" class="air-btn air-btn--dislike air-btn--icone" aria-label="Não curti" title="Não curti" aria-pressed="false">
+                  <svg aria-hidden="true"><use href="#icone-joinha" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result reveal: the sun is the button -->
+    <div id="revelacao" class="revelacao" role="dialog" aria-modal="true" aria-labelledby="revelacao-titulo" hidden>
+      <div class="nascente" aria-hidden="true">
+        <div class="nascente__raios"></div>
+      </div>
+      <div class="mar mar--tela" aria-hidden="true">
+        <svg class="mar__onda mar__onda--clara"><use href="#onda-a" width="100%" height="100%" /></svg>
+        <svg class="mar__onda mar__onda--media"><use href="#onda-b" width="100%" height="100%" /></svg>
+        <svg class="mar__onda mar__onda--funda"><use href="#onda-c" width="100%" height="100%" /></svg>
+      </div>
+      <div id="revelacao-convite" class="revelacao__convite">
+        <h2 id="revelacao-titulo" class="revelacao__titulo">O resultado saiu!</h2>
+        <button type="button" id="btn-revelar" class="revelacao__sol">Ver o resultado</button>
+      </div>
+      <div id="revelacao-resultado" class="revelacao__cartao" hidden>
+        <p id="revelacao-chamada" class="revelacao__chamada"></p>
+        <div id="revelacao-vencedoras" class="revelacao__vencedoras"></div>
+        <h3 class="revelacao__subtitulo">Ranking</h3>
+        <ol id="revelacao-ranking" class="revelacao__ranking"></ol>
+        <button type="button" id="btn-revelacao-fechar" class="air-btn air-btn--primary air-btn--block">Ver as casas</button>
+      </div>
+    </div>
+    <canvas id="confete" class="confete" aria-hidden="true" hidden></canvas>
+
+    <div id="popup-template" hidden>
+      <div class="popup-casa">
+        <img class="popup-img" alt="" />
+        <div class="popup-texto">
+          <strong class="popup-titulo"></strong>
+          <span class="popup-preco"></span>
+          <span class="popup-dist" hidden></span>
+        </div>
+        <button type="button" class="air-btn air-btn--primary air-btn--block js-ver-mais">Abrir fotos</button>
+      </div>
+    </div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </body>
+</html>
