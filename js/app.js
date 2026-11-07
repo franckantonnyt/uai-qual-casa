@@ -1261,7 +1261,8 @@
               b.appendChild(ph);
             } else {
               const im = document.createElement("img");
-              im.src = url;
+              im.loading = "lazy";
+              im.src = url.replace("im_w=1200", "im_w=240");
               im.alt = "";
               b.appendChild(im);
             }
