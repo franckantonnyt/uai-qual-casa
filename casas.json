@@ -154,7 +154,7 @@
     "titulo": "Cobertura capixaba, frente ao mar (Fundão)",
     "local": "Fundão, ES",
     "quartos": 4,
-    "preco": 9750,
+    "preco": 11250,
     "descricao": "**Fundão, ES | Cobertura de frente para o mar**\n\n- Até **10 hóspedes** · **4 quartos** · **4 camas** · **4 banheiros**\n- **Cobertura** com vista; piscina, churrasqueira e área externa\n- Cozinha completa; ar-condicionado nos cômodos (conforme anúncio)\n- Wi-Fi, TV; acesso à praia na região da Praça Joaripe (~5 min a pé)",
     "lat": -20.041,
     "lng": -40.1858,
@@ -261,49 +261,6 @@
       "imagens/casas/casa-red-house-praia-grande/12.jpeg",
       "imagens/casas/casa-red-house-praia-grande/13.jpeg",
       "imagens/casas/casa-red-house-praia-grande/14.jpeg"
-    ]
-  },
-  {
-    "id": "local-guarapari-casa-2",
-    "titulo": "Casa 2, Fundão",
-    "local": "Fundão, ES",
-    "quartos": 3,
-    "preco": 4000,
-    "descricao": "**Fundão, ES**\n\n- **3 quartos** e **3 banheiros**\n- **Sala** e **cozinha**\n- **Área de serviço**\n- **Piscina**\n- **Garagem** para **até 4 carros**",
-    "lat": -20.0135,
-    "lng": -40.1575,
-    "ordem": 6,
-    "link": "",
-    "fotos": [
-      "imagens/casas/casa-2/01.jpeg",
-      "imagens/casas/casa-2/02.jpeg",
-      "imagens/casas/casa-2/03.jpeg",
-      "imagens/casas/casa-2/04.jpeg",
-      "imagens/casas/casa-2/05.jpeg",
-      "imagens/casas/casa-2/06.jpeg",
-      "imagens/casas/casa-2/07.jpeg",
-      "imagens/casas/casa-2/08.jpeg",
-      "imagens/casas/casa-2/09.jpeg",
-      "imagens/casas/casa-2/10.jpeg",
-      "imagens/casas/casa-2/11.jpeg",
-      "imagens/casas/casa-2/12.jpeg",
-      "imagens/casas/casa-2/13.jpeg"
-    ]
-  },
-  {
-    "id": "local-guarapari-casa-3",
-    "titulo": "Casa 3, ao lado da nossa (vídeo)",
-    "local": "Fundão, ES",
-    "quartos": 3,
-    "preco": 3200,
-    "descricao": "**Fundão, ES | Casa ao lado**\n\n- Disponível **16 a 20** (valores combinados para este período)\n- **Sem ar-condicionado** (em nenhum cômodo da casa)",
-    "lat": -20.0377497,
-    "lng": -40.1833644,
-    "ordem": 7,
-    "link": "",
-    "fotos": [
-      "imagens/casas/casa-3/cover.jpg",
-      "imagens/casas/casa-3/tour.mp4"
     ]
   }
 ]
